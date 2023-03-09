@@ -2,6 +2,7 @@ const url = require('url')
 //crear stringDecoder para recibir objetos
 const stringDecoder = require('string_decoder').StringDecoder;
 const router = require('./router');//cuando creas un modulo se llama con la ruta del archivo, asi como este
+const { randomNumbers } = require('./util');
 
 //el objeto o prototipo http tiene un método que se llama por el punto .
 module.exports = (req, res) => {
@@ -80,7 +81,7 @@ module.exports = (req, res) => {
 
         //paso 3.5 ordenar los datos de respuesta
         //estoy creando lo que llega en request pero de una forma legible para el desarrollador
-        const data = {
+        let data = {
             index,
             route: mainRoute || cleanRoute,
             query,
@@ -88,6 +89,10 @@ module.exports = (req, res) => {
             headers,
             payload: buffer,
         };
+
+        if(method === 'post' && data.payload) {
+            data.payload.id = randomNumbers();
+        }
 
         //paso 3.6 elegir el manejador de la respuesta dependiendo de la ruta y asignarle la función que el enrutador tiene (handler)
         let handler;
@@ -113,7 +118,14 @@ module.exports = (req, res) => {
 
         if(typeof handler === 'function') {
             handler(data, (statusCode = 200, message) => {
-                const response = JSON.stringify(message);
+                let response = null;
+                if(typeof message === "string") {
+                    response = message;
+                }
+                if(typeof message === "object") {
+                    response = JSON.stringify(message);
+                }
+                
                 //clave valor
                 res.setHeader('Content-Type', "application/json")
                 res.writeHead(statusCode);

@@ -2,16 +2,16 @@
 
 module.exports = {
     pets: [
-        {petType: 'Perro', petName: 'Pimo', petOwner: 'Melissa'},
-        {petType: 'Perro', petName: 'Mumi', petOwner: 'Alejandro'},
+        {petType: 'Perro', petName: 'Pimo', owner: 'Melissa'},
+        {petType: 'Perro', petName: 'Mumi', owner: 'Alejandro'},
 
     ],
 
     vets: [
-        {vetName: "Miguel", vetLName: "Monroy", vetId: "12301231", vetCountry: "Mexico"},
-        {vetName: "Luis", vetLName: "Ucan", vetId: "98348234", vetCountry: "Mexico"},
-        {vetName: "Aaron", vetLName: "Dominguez", vetId: "92843612", vetCountry: "Mexico"},
-        {vetName: "Arvin", vetLName: "Balam", vetId: "928374", vetCountry: "Mexico"},
+        {vetName: "Miguel", vetLName: "Monroy", vetLicense: "12301231", vetCountry: "Mexico"},
+        {vetName: "Luis", vetLName: "Ucan", vetLicense: "98348234", vetCountry: "Mexico"},
+        {vetName: "Aaron", vetLName: "Dominguez", vetLicense: "92843612", vetCountry: "Mexico"},
+        {vetName: "Arvin", vetLName: "Balam", vetLicense: "928374", vetCountry: "Mexico"},
     ],
 
     owners: [
