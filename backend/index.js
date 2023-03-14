@@ -6,9 +6,11 @@ const requestHandler = require('./request-handler')
 //la constante server es lo que va a utilizarse para ejecutar
 const server = http.createServer(requestHandler);
 
+const port = 80;
+
 //y por ende, server siempre va a estar escuchando en donde uno le indique
-server.listen(8000, ()=>{
-    console.log("el servidor ahora escucha las peticiones en el servidor localhost:8000");
+server.listen(port, ()=>{
+    console.log(`el servidor ahora escucha las peticiones en el servidor localhost${port}`);
 });
 
 //nota: para matar el proceso debes presionar control+c (NO COMMAND, -->control<--)

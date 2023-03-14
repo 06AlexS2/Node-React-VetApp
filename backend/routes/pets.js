@@ -37,7 +37,7 @@ module.exports = function petsHandler(){
                             /* creo una expresion regular para que la busqueda arroje resultados parciales
                             de lo que se manda como criterio de busqueda, i.e. si tipo gat en el query 
                             me devolviera todas las mascotas con tipo gato */
-                            const regularExp = new RegExp(data.query[key], "gi");
+                            const regularExp = new RegExp(data.query[key], "ig");
                             //result guarda la verificacion de la expresion regular en cada campo
                             result = _pet[key].match(regularExp);
 
@@ -53,7 +53,9 @@ module.exports = function petsHandler(){
                 }
                 let response = [];
                 for(const pet of petsResponse) {
-                    response = [...response, {...pet, owner: await getOne({
+                    response = [...response, {
+                        ...pet, 
+                        owner: await getOne({
                         entityDir: "owners",
                         fileName: pet.owner,
                         }),

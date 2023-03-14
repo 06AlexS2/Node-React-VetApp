@@ -3,6 +3,7 @@ const url = require('url')
 const stringDecoder = require('string_decoder').StringDecoder;
 const router = require('./router');//cuando creas un modulo se llama con la ruta del archivo, asi como este
 const { randomNumbers } = require('./util');
+const path = require("path");
 
 //el objeto o prototipo http tiene un método que se llama por el punto .
 module.exports = (req, res) => {
@@ -15,7 +16,7 @@ module.exports = (req, res) => {
     const route = parsedUrl.pathname;
 
     //paso 3: quitar / de ruta
-    const cleanRoute = route.replace(/^\/+|\/+$/g, '');
+    const cleanRoute = route.replace(/^\/+|\/+$/g, "");
 
     //paso 3.1: obtener el metodo http
     const method = req.method.toLowerCase();
@@ -94,6 +95,30 @@ module.exports = (req, res) => {
             data.payload.id = randomNumbers();
         }
 
+        if(method === 'get' && data.route === "") {
+            data.route = "index.html";
+        }
+
+        
+
+        const mimeTypes = {
+            ".html" : "text/html",
+            ".json" : "application/json",
+            ".ico" : "image/x-icon",
+            ".css" : "text/css",
+            ".js" : "text/javascript",
+            ".map" : "application/octet-stream",
+            ".png": "image/png",
+
+        }
+
+        const files = ["index.html", "manifest.json", "favicon.ico", "static"];
+        const isFile = files.includes(data.route);
+
+        if(method === 'get' && data.route === "static" && isFile) {
+            data.index = cleanRoute;
+        }
+
         //paso 3.6 elegir el manejador de la respuesta dependiendo de la ruta y asignarle la función que el enrutador tiene (handler)
         let handler;
         if(data.route && router[data.route] && router[data.route][method]){
@@ -102,6 +127,8 @@ module.exports = (req, res) => {
         } else {
             handler = router.notFounded;
         }
+
+        
 
         //paso 4: enviar una respuesta dependiendo de la ruta
         /*NOTA: te daba el error 'ERR_STREAM_WRITE_AFTER_END' porque despues de un res.end()
@@ -118,6 +145,20 @@ module.exports = (req, res) => {
 
         if(typeof handler === 'function') {
             handler(data, (statusCode = 200, message) => {
+                if(isFile) {
+                    let fileRoute = path.join(__dirname, "public", data.route);
+                    if(data.route === "static") {
+                        fileRoute = path.join(__dirname, "public", data.index);
+                    }
+                    const fileExtension = path.extname(fileRoute);
+                    const mimeType = mimeTypes[fileExtension];
+                    //dato tipo mime del archivo html
+                    res.writeHead(statusCode, { 'Content-Type': mimeType });
+                    console.log({mimeType});
+                    //recibes en el mensaje algo, los streams se dirigen a algun lado por una tuberia
+                    //o pipe que tiene como final la respuesta
+                    return message.pipe(res);
+                }
                 let response = null;
                 if(typeof message === "string") {
                     response = message;
